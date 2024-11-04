@@ -74,7 +74,7 @@ const AppNavigation = () => {
                 title={'Create Expense'}
                 visible={isModalOpen}
                 onClose={() => setIsModalOpen(!isModalOpen)}>
-                <ExpenseModal />
+                <ExpenseModal onClose={handleCloseModal} />
               </BottomModal>
             </View>
           ),
