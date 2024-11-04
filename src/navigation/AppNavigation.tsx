@@ -1,13 +1,28 @@
 import React, {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text} from 'react-native';
+import {useState} from 'react';
+import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import 'react-native-gesture-handler';
 
+import {plusIcon} from '../assets';
+import BottomModal from '../components/BottomModal';
+import ExpenseModal from '../components/ExpenseModal';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import {COLORS} from '../constants/theme';
 
 const Tab = createBottomTabNavigator();
 
 const AppNavigation = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -19,15 +34,63 @@ const AppNavigation = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => <Text>Home</Text>,
+          tabBarIcon: ({focused}) => (
+            <Text style={{color: focused ? COLORS.primary : COLORS.secondary}}>
+              Home
+            </Text>
+          ),
         }}
       />
+      <Tab.Screen
+        name={'ExpenseModal'}
+        component={ExpenseModal}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <View>
+              <TouchableOpacity onPress={handleOpenModal}>
+                <View
+                  style={{
+                    width: 55,
+                    height: 55,
+                    backgroundColor: COLORS.primary,
+                    borderRadius: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: Platform.OS == 'android' ? 80 : 50,
+                  }}>
+                  <Image
+                    source={plusIcon}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      tintColor: 'white',
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <BottomModal
+                title={'Create Expense'}
+                visible={isModalOpen}
+                onClose={() => setIsModalOpen(!isModalOpen)}>
+                <ExpenseModal />
+              </BottomModal>
+            </View>
+          ),
+        }}
+      />
+
       <Tab.Screen
         name={'Profile'}
         component={ProfileScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => <Text>Profile</Text>,
+          tabBarIcon: ({focused}) => (
+            <Text style={{color: focused ? COLORS.primary : COLORS.secondary}}>
+              Profile
+            </Text>
+          ),
         }}
       />
     </Tab.Navigator>
