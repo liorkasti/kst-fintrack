@@ -1,35 +1,26 @@
+import React, {FC, useEffect} from 'react';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {FC, Key, useEffect, useState} from 'react';
-import {Alert, StyleSheet, TextInput, View} from 'react-native';
 import Button from '../components/Button';
+import useLogin from '../hooks/useLogin';
+import {RootStackParamListType} from '../redux/types';
 import {COLORS} from '../constants/theme';
 
 interface WelcomeScreenProps {
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<
+    RootStackParamListType,
+    'WelcomeScreen'
+  >;
 }
+
 const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
-  const [name, setName] = useState<string>('');
-  const [id, setId] = useState<Key>('');
+  const {name, setName, id, handleLoginPress} = useLogin();
 
   useEffect(() => {
     if (id !== '') {
       navigation.navigate('AppNavigation');
     }
   }, [id, navigation]);
-
-  const handleLoginPress = async () => {
-    if (name.length > 2) {
-      try {
-        const userId = Math.random().toString(36).substr(2, 5);
-        setId(userId);
-      } catch (error) {
-        console.error(error);
-        Alert.alert('Failed to save user data');
-      }
-    } else {
-      Alert.alert('Please enter a valid name between 2 to 20 characters');
-    }
-  };
 
   return (
     <View style={styles.container}>

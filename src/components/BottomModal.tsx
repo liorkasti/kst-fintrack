@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 
 import {closeIcon} from '../assets';
-import {hightStatusBar, HIT_SLOP_10} from '../constants';
 import {useModalTopPadding} from '../hooks';
 import {COLORS} from '../constants/theme';
+import {hightStatusBar, HIT_SLOP_10} from '../utils';
 
 type BottomModalProps = {
   visible: boolean;

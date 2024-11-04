@@ -1,0 +1,13 @@
+export const dateStr = 'Date:';
+export const titleStr = 'Title:';
+export const amountStr = 'Amount:';
+export const createStr = 'Create';
+export const filterStr = 'Filter';
+export const filtersStr = 'Filters';
+export const signOutStr = 'Sign Out';
+export const totalExpensesStr = 'Total Expenses: $';
+export const totalExpensesItemsStr = 'Total Expenses Items';
+export const cleanString: string = 'clean';
+export const clearFilterString: string = 'Clear Filter';
+export const titlePH: string = 'Enter title';
+export const datePH: string = 'Enter date';
