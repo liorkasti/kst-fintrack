@@ -10,4 +10,4 @@ export const totalExpensesItemsStr = 'Total Expenses Items';
 export const cleanString: string = 'clean';
 export const clearFilterString: string = 'Clear Filter';
 export const titlePH: string = 'Enter title';
-export const datePH: string = 'Enter date';
+export const datePH: string = 'Date';

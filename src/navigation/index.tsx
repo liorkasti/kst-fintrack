@@ -4,19 +4,22 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import React, {FC} from 'react';
+import {useSelector} from 'react-redux';
+import {RootStateType} from '../redux/types';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
 import AppNavigation from './AppNavigation';
 
 const RootStack = createNativeStackNavigator();
-const username = 'Lior';
 
 const RootStackScreen: FC = () => {
+  const {username} = useSelector((state: RootStateType) => state.user);
+
   const getAppNavigationOptions = (): NativeStackNavigationOptions => {
     if (username) {
       return {
         headerShown: true,
-        title: 'Lior',
+        title: username,
         headerTitleAlign: 'center',
         headerBackVisible: false,
       };
