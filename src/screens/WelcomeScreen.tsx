@@ -1,15 +1,15 @@
-import React, {FC, useEffect, useState} from 'react';
-import {Button, StyleSheet, TextInput, Alert, View} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-// import inputsValidation from '../utils/inputsValidation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {FC, Key, useEffect, useState} from 'react';
+import {Alert, StyleSheet, TextInput, View} from 'react-native';
+import Button from '../components/Button';
+import {COLORS} from '../constants/theme';
 
 interface WelcomeScreenProps {
   navigation: NativeStackNavigationProp<any>;
 }
 const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
   const [name, setName] = useState<string>('');
-  const [id, setId] = useState('');
+  const [id, setId] = useState<Key>('');
 
   useEffect(() => {
     if (id !== '') {
@@ -21,7 +21,6 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
     if (name.length > 2) {
       try {
         const userId = Math.random().toString(36).substr(2, 5);
-        await AsyncStorage.setItem('user', JSON.stringify({id: userId, name}));
         setId(userId);
       } catch (error) {
         console.error(error);
@@ -37,11 +36,11 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
       <TextInput
         style={styles.input}
         placeholder="Enter name"
-        placeholderTextColor={'gray'}
+        placeholderTextColor={COLORS.placeholder}
         value={name}
         onChangeText={setName}
       />
-      <Button onPress={handleLoginPress} title="Login" />
+      <Button onButtonPress={handleLoginPress} text="Login" />
     </View>
   );
 };
@@ -52,6 +51,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.bkg,
   },
   title: {
     fontSize: 24,
@@ -59,8 +59,10 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   input: {
+    backgroundColor: COLORS.inputBkg,
     borderWidth: 1,
-    color: 'navy',
+    borderColor: COLORS.thirdary,
+    color: COLORS.thirdary,
     borderRadius: 3,
     paddingTop: 28,
     paddingBottom: 9,
