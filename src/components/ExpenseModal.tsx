@@ -1,10 +1,9 @@
 import React, {FC, useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity} from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {useDispatch} from 'react-redux';
+import DatePicker from 'react-native-date-picker';
 import {amountStr, createStr, datePH, titleStr} from '../constants';
 import {COLORS} from '../constants/theme';
-import {HIT_SLOP_10} from '../utils';
+import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
 
 interface ExpenseModalProps {
@@ -14,21 +13,21 @@ interface ExpenseModalProps {
 const ExpenseModal: FC<ExpenseModalProps> = ({onClose}) => {
   const [title, setTitle] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
-  const [date, setDate] = useState<string>('');
-  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [formattedDate, setFormattedDate] = useState<string>('');
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
 
-  const dispatch = useDispatch();
+  const showDatePicker = () => setOpen(true);
+  const hideDatePicker = () => setOpen(false);
 
-  const hideDatePicker = () => {
-    setIsDatePickerVisible(false);
-  };
-  const showPicker = () => {
-    setIsDatePickerVisible(true);
+  const handleConfirm = (selectedDate: Date) => {
+    setDate(selectedDate);
+    setFormattedDate(formatDate(selectedDate));
+    hideDatePicker();
+    console.log('A date has been picked: ', selectedDate);
   };
 
   const handleCreate = () => {};
-
-  const handleConfirm = () => {};
 
   return (
     <>
@@ -51,24 +50,30 @@ const ExpenseModal: FC<ExpenseModalProps> = ({onClose}) => {
 
         <TouchableOpacity
           style={styles.input}
-          onPress={showPicker}
+          onPress={showDatePicker}
           hitSlop={HIT_SLOP_10}>
-          {date ? (
-            <Text style={styles.inputTitle}>{date}</Text>
+          {formattedDate ? (
+            <Text style={styles.inputTitle}>{formattedDate}</Text>
           ) : (
             <Text style={[styles.inputTitle, {color: COLORS.placeholder}]}>
               {datePH}
             </Text>
           )}
         </TouchableOpacity>
-        {isDatePickerVisible && (
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-            style={styles.datePicker}
-          />
+        {open && (
+          <>
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              style={styles.datePicker}
+              maximumDate={new Date()}
+              minimumDate={minDate}
+            />
+          </>
         )}
         <Button text={createStr} onButtonPress={handleCreate} />
       </>
