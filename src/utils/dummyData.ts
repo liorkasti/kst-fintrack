@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {ExpenseType} from '../redux/types';
+import {ExpenseType} from '../constants/types';
 
 const d1 = moment(new Date(2023, 5, 17)).format('DD.MM.YYYY');
 const d2 = moment(new Date(2023, 5, 18)).format('DD.MM.YYYY');

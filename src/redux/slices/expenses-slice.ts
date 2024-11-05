@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {dummyExpenses} from '../../utils/dummyData.ts';
-import {ExpensesStateType, ExpenseType} from '../types';
+import {ExpensesStateType, ExpenseType} from '../../constants/types.ts';
 import {Alert} from 'react-native/Libraries/Alert/Alert';
 
 const initialState: ExpensesStateType = {

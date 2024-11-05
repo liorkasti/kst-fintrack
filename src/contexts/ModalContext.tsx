@@ -1,6 +1,6 @@
 // src/contexts/ModalContext.tsx
 import React, {createContext, useContext, useState, ReactNode} from 'react';
-import {ModalContextType, ModalTitle} from '../redux/types';
+import {ModalContextType, ModalTitle} from '../constants/types';
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 

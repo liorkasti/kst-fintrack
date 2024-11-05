@@ -2,8 +2,6 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TextInputProps} from 'react-native';
 
-export const ADD_EXPENSE = 'ADD_EXPENSE';
-export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export interface UserStateType {
   username: string;
   id: string;

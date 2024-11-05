@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {UserStateType} from '../types';
+import {UserStateType} from '../../constants/types';
 
 interface StoreUserPayload {
   userName: string;

@@ -5,8 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {signOutStr, totalExpensesItemsStr} from '../constants';
 import {removeUser} from '../redux/slices/user-slice';
-import {RootStateType} from '../redux/types';
-import {RootStackParamListType} from '../redux/types';
+import {RootStateType} from '../constants/types';
+import {RootStackParamListType} from '../constants/types';
 import {COLORS} from '../constants/theme';
 
 type ProfileScreenProps = {

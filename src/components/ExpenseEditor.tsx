@@ -2,27 +2,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {FC, useState} from 'react';
 import {
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch} from 'react-redux';
 import {
   amountStr,
   cleanString,
-  createStr,
   datePH,
-  dateStr,
   filtersStr,
-  titlePH,
   titleStr,
 } from '../constants';
 import {COLORS} from '../constants/theme';
+import {ExpenseType} from '../constants/types';
 import {useModal} from '../contexts/ModalContext';
 import useInputValidation from '../hooks/useInputValidation';
 import {
@@ -32,7 +27,6 @@ import {
   setFilterDate,
   setFilterTitle,
 } from '../redux/slices/expenses-slice';
-import {ExpenseType} from '../redux/types';
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
 
@@ -52,7 +46,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
-  const [titleFilter, setTitleFilter] = useState<string>('');
+  // const [titleFilter, setTitleFilter] = useState<string>('');
 
   const {modalTitle, closeModal} = useModal();
   const filterFnc = modalTitle === filtersStr;
@@ -115,8 +109,8 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   };
 
   const onClean = (): void => {
-    setTitleFilter('');
-    setFormattedDate('');
+    // setTitleFilter('');
+    // setFormattedDate('');
     dispatch(clearFilters());
   };
 

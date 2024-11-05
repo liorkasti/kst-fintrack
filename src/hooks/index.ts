@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 import {filtersStr} from '../constants';
-import {ModalTitle} from '../redux/types';
+import {ModalTitle} from '../constants/types';
 
 export const useModalTopPadding = (title: ModalTitle): number =>
   title === filtersStr

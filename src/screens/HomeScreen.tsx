@@ -18,7 +18,11 @@ import {
   deleteExpense,
   updateLocalStorage,
 } from '../redux/slices/expenses-slice';
-import {ExpenseSectionType, ExpenseType, RootStateType} from '../redux/types';
+import {
+  ExpenseSectionType,
+  ExpenseType,
+  RootStateType,
+} from '../constants/types';
 import {HIT_SLOP_10} from '../utils';
 
 const HomeScreen = () => {
