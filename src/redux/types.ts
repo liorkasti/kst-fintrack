@@ -1,3 +1,5 @@
+import {RouteProp} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TextInputProps} from 'react-native';
 
 export const ADD_EXPENSE = 'ADD_EXPENSE';
@@ -33,13 +35,6 @@ export interface RootStateType {
   error: string | null;
 }
 
-export type RootStackParamListType = {
-  WelcomeScreen: undefined;
-  HomeScreen: undefined;
-  ProfileScreen: undefined;
-  AppNavigation: undefined;
-};
-
 export interface InputType {
   label: string;
   textInputConfig?: TextInputProps;
@@ -47,3 +42,21 @@ export interface InputType {
   testID?: string;
   invalid: boolean;
 }
+
+export interface ScreenProps<T extends keyof RootStackParamListType> {
+  navigation: RootStackNavigationProp<T>;
+  route: RootStackRouteProp<T>;
+}
+
+export type RootStackParamListType = {
+  WelcomeScreen: undefined;
+  HomeScreen: undefined;
+  ProfileScreen: undefined;
+  AppNavigation: undefined;
+};
+
+export type RootStackNavigationProp<T extends keyof RootStackParamListType> =
+  NativeStackNavigationProp<RootStackParamListType, T>;
+
+export type RootStackRouteProp<T extends keyof RootStackParamListType> =
+  RouteProp<RootStackParamListType, T>;

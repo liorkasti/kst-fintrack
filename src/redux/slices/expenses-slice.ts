@@ -23,9 +23,6 @@ const expensesSlice = createSlice({
       state.expenses = state.expenses.filter(
         expense => expense.id !== expenseId,
       );
-      state.filteredData = state.filteredData.filter(
-        expense => expense.id !== expenseId,
-      );
     },
   },
 });

@@ -31,6 +31,7 @@ const AppNavigation = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (
+            //TODO: React.FC
             <Text style={{color: focused ? COLORS.primary : COLORS.secondary}}>
               Home
             </Text>
@@ -43,6 +44,7 @@ const AppNavigation = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (
+            //TODO: React.FC
             <View>
               <TouchableOpacity onPress={handleOpenModal}>
                 <View
