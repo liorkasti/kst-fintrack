@@ -13,15 +13,17 @@ import {COLORS} from '../constants/theme';
 import {useModal} from '../contexts/ModalContext';
 import {useModalTopPadding} from '../hooks';
 import {hightStatusBar, HIT_SLOP_10} from '../utils';
+import {filtersStr} from '../constants';
 
 type ExpenseModalProps = {
   children: React.ReactNode;
-  title: string;
 };
 
-const ExpenseModal: FC<ExpenseModalProps> = ({children, title}) => {
-  const {isModalOpen, closeModal} = useModal();
-  const modalTopPadding = useModalTopPadding(title);
+const ExpenseModal: FC<ExpenseModalProps> = ({children}) => {
+  const {isModalOpen, modalTitle, closeModal} = useModal();
+  const modalTopPadding = useModalTopPadding(modalTitle);
+  console.log({isModalOpen, modalTitle, closeModal});
+
   if (!isModalOpen) return null;
 
   return (
@@ -41,9 +43,9 @@ const ExpenseModal: FC<ExpenseModalProps> = ({children, title}) => {
           <Text
             style={[
               styles.modalTitle,
-              {marginTop: title === 'Filters' ? -20 : 0},
+              {marginTop: modalTitle === filtersStr ? -20 : 0},
             ]}>
-            {title}
+            {modalTitle}
           </Text>
           <TouchableOpacity
             hitSlop={HIT_SLOP_10}

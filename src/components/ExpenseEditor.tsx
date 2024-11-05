@@ -2,18 +2,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {FC, useState} from 'react';
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch} from 'react-redux';
-import {amountStr, createStr, datePH, titleStr} from '../constants';
+import {
+  amountStr,
+  cleanString,
+  createStr,
+  datePH,
+  dateStr,
+  filtersStr,
+  titlePH,
+  titleStr,
+} from '../constants';
 import {COLORS} from '../constants/theme';
 import {useModal} from '../contexts/ModalContext';
 import useInputValidation from '../hooks/useInputValidation';
-import {addExpense} from '../redux/slices/expenses-slice';
+import {
+  addExpense,
+  clearFilters,
+  filterExpenses,
+  setFilterDate,
+  setFilterTitle,
+} from '../redux/slices/expenses-slice';
 import {ExpenseType} from '../redux/types';
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
@@ -34,7 +52,10 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
-  const {closeModal} = useModal();
+  const [titleFilter, setTitleFilter] = useState<string>('');
+
+  const {modalTitle, closeModal} = useModal();
+  const filterFnc = modalTitle === filtersStr;
 
   const dispatch = useDispatch();
 
@@ -78,29 +99,54 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
         setTitle('');
         setAmount('');
         setFormattedDate('');
-        closeModal();
+        closeModal;
       }
     } catch (error) {
       console.log('Error saving expense:', error);
     }
   };
+
+  const handleFilter = (): void => {
+    dispatch(setFilterTitle(title));
+    dispatch(setFilterDate(formattedDate));
+    dispatch(filterExpenses());
+    closeModal;
+    dispatch(clearFilters());
+  };
+
+  const onClean = (): void => {
+    setTitleFilter('');
+    setFormattedDate('');
+    dispatch(clearFilters());
+  };
+
   return (
     <>
-      <TextInput
-        style={styles.input}
-        placeholder={titleStr}
-        placeholderTextColor={COLORS.placeholder}
-        value={title}
-        onChangeText={setTitle}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder={amountStr}
-        placeholderTextColor={COLORS.placeholder}
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
+      <>
+        {filterFnc && (
+          <TouchableOpacity
+            style={styles.cleanButton}
+            onPress={onClean}
+            hitSlop={HIT_SLOP_10}>
+            <Text style={styles.cleanText}>{cleanString}</Text>
+          </TouchableOpacity>
+        )}
+        <TextInput
+          style={styles.input}
+          placeholder={titleStr}
+          placeholderTextColor={COLORS.placeholder}
+          value={title}
+          onChangeText={setTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder={amountStr}
+          placeholderTextColor={COLORS.placeholder}
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+        />
+      </>
 
       <TouchableOpacity
         style={styles.input}
@@ -123,13 +169,16 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
             mode="date"
             onConfirm={handleDatePicker}
             onCancel={hideDatePicker}
-            style={styles.datePicker}
+            // style={styles.datePicker}
             maximumDate={new Date()}
             minimumDate={minDate}
           />
         </>
       )}
-      <Button text={createStr} onButtonPress={handleCreate} />
+      <Button
+        text={modalTitle}
+        onButtonPress={filterFnc ? handleFilter : handleCreate}
+      />
     </>
   );
 };
@@ -141,7 +190,7 @@ const styles = StyleSheet.create({
   cleanText: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginTop: -64,
+    marginTop: -46,
     color: COLORS.primary,
   },
   input: {

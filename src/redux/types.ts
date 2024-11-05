@@ -17,6 +17,8 @@ export interface ExpenseType {
 
 export interface ExpensesStateType {
   expenses: ExpenseType[];
+  filteredData: ExpenseType[];
+  filters: FiltersType;
 }
 export interface ExpenseSectionType {
   title: string;
@@ -43,6 +45,14 @@ export interface InputType {
   invalid: boolean;
 }
 
+export type ModalTitle = 'Create' | 'Edit' | 'Filters';
+
+export interface ModalContextType {
+  isModalOpen: boolean;
+  modalTitle: ModalTitle;
+  openModal: (title: ModalTitle) => void;
+  closeModal: () => void;
+}
 export interface ScreenProps<T extends keyof RootStackParamListType> {
   navigation: RootStackNavigationProp<T>;
   route: RootStackRouteProp<T>;

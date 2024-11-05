@@ -1,6 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {UserStateType} from '../types';
 
+interface StoreUserPayload {
+  userName: string;
+  id: string;
+}
+
 const initialState: UserStateType = {
   username: '',
   id: '',
@@ -10,8 +15,8 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    storeUser: (state, action: PayloadAction<UserStateType>) => {
-      state.username = action.payload.username;
+    storeUser: (state, action: PayloadAction<StoreUserPayload>) => {
+      state.username = action.payload.userName;
       state.id = action.payload.id;
     },
     removeUser: state => {

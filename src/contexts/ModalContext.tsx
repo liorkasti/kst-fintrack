@@ -1,21 +1,26 @@
+// src/contexts/ModalContext.tsx
 import React, {createContext, useContext, useState, ReactNode} from 'react';
-
-interface ModalContextType {
-  isModalOpen: boolean;
-  openModal: () => void;
-  closeModal: () => void;
-}
+import {ModalContextType, ModalTitle} from '../redux/types';
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider: React.FC<{children: ReactNode}> = ({children}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<ModalTitle>('Create');
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = (title: ModalTitle) => {
+    setModalTitle(title);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalTitle('Create');
+  };
 
   return (
-    <ModalContext.Provider value={{isModalOpen, openModal, closeModal}}>
+    <ModalContext.Provider
+      value={{isModalOpen, modalTitle, openModal, closeModal}}>
       {children}
     </ModalContext.Provider>
   );

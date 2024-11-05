@@ -2,12 +2,19 @@ import React, {FC} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {signOutStr, totalExpensesItemsStr} from '../constants';
-import {COLORS} from '../constants/theme';
 import {removeUser} from '../redux/slices/user-slice';
-import {RootStateType, ScreenProps} from '../redux/types';
+import {RootStateType} from '../redux/types';
+import {RootStackParamListType} from '../redux/types';
+import {COLORS} from '../constants/theme';
 
-type ProfileScreenProps = ScreenProps<'ProfileScreen'>;
+type ProfileScreenProps = {
+  navigation: NativeStackNavigationProp<
+    RootStackParamListType,
+    'ProfileScreen'
+  >;
+};
 
 const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
@@ -34,6 +41,7 @@ const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  //TODO: add custom styles in theme.tsx
   container: {
     flex: 1,
     justifyContent: 'center',

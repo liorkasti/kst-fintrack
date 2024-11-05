@@ -1,11 +1,17 @@
 import React, {FC, useEffect} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Button from '../components/Button';
-import {COLORS} from '../constants/theme';
 import useLogin from '../hooks/useLogin';
-import {ScreenProps} from '../redux/types';
+import {RootStackParamListType} from '../redux/types';
+import {COLORS} from '../constants/theme';
 
-type WelcomeScreenProps = ScreenProps<'WelcomeScreen'>;
+interface WelcomeScreenProps {
+  navigation: NativeStackNavigationProp<
+    RootStackParamListType,
+    'WelcomeScreen'
+  >;
+}
 
 const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
   const {name, setName, id, handleLoginPress} = useLogin();

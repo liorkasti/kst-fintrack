@@ -39,10 +39,10 @@ const AppNavigation = () => {
         component={ExpenseEditor}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: () => (
             //TODO: React.FC
             <View>
-              <TouchableOpacity onPress={openModal}>
+              <TouchableOpacity onPress={() => openModal('Create')}>
                 <View
                   style={{
                     width: 55,
@@ -64,7 +64,7 @@ const AppNavigation = () => {
                 </View>
               </TouchableOpacity>
 
-              <ExpenseModal title={'Create Expense'}>
+              <ExpenseModal>
                 <ExpenseEditor />
               </ExpenseModal>
             </View>
