@@ -1,23 +1,19 @@
 import React, {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useState} from 'react';
 import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import 'react-native-gesture-handler';
 
 import {plusIcon} from '../assets';
-import BottomModal from '../components/BottomModal';
 import ExpenseEditor from '../components/ExpenseEditor';
+import ExpenseModal from '../components/ExpenseModal';
+import {COLORS} from '../constants/theme';
+import {useModal} from '../contexts/ModalContext';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import {COLORS} from '../constants/theme';
 
 const Tab = createBottomTabNavigator();
 
 const AppNavigation = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  const {openModal} = useModal();
 
   return (
     <Tab.Navigator
@@ -46,7 +42,7 @@ const AppNavigation = () => {
           tabBarIcon: ({focused}) => (
             //TODO: React.FC
             <View>
-              <TouchableOpacity onPress={handleOpenModal}>
+              <TouchableOpacity onPress={openModal}>
                 <View
                   style={{
                     width: 55,
@@ -68,12 +64,9 @@ const AppNavigation = () => {
                 </View>
               </TouchableOpacity>
 
-              <BottomModal
-                title={'Create Expense'}
-                visible={isModalOpen}
-                onClose={() => setIsModalOpen(!isModalOpen)}>
+              <ExpenseModal title={'Create Expense'}>
                 <ExpenseEditor />
-              </BottomModal>
+              </ExpenseModal>
             </View>
           ),
         }}

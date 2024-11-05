@@ -9,29 +9,25 @@ import {
 } from 'react-native';
 
 import {closeIcon} from '../assets';
-import {useModalTopPadding} from '../hooks';
 import {COLORS} from '../constants/theme';
+import {useModal} from '../contexts/ModalContext';
+import {useModalTopPadding} from '../hooks';
 import {hightStatusBar, HIT_SLOP_10} from '../utils';
 
-type BottomModalProps = {
-  visible: boolean;
-  onClose: () => void;
-  children?: any;
+type ExpenseModalProps = {
+  children: React.ReactNode;
   title: string;
 };
 
-const BottomModal: FC<BottomModalProps> = ({
-  children,
-  onClose,
-  visible,
-  title,
-}) => {
+const ExpenseModal: FC<ExpenseModalProps> = ({children, title}) => {
+  const {isModalOpen, closeModal} = useModal();
   const modalTopPadding = useModalTopPadding(title);
+  if (!isModalOpen) return null;
 
   return (
     <Modal
-      visible={visible}
-      onRequestClose={onClose}
+      visible={isModalOpen}
+      onRequestClose={closeModal}
       animationType="fade"
       transparent={true}
       statusBarTranslucent={true}>
@@ -52,7 +48,7 @@ const BottomModal: FC<BottomModalProps> = ({
           <TouchableOpacity
             hitSlop={HIT_SLOP_10}
             style={styles.closeButton}
-            onPress={onClose}>
+            onPress={closeModal}>
             <Image source={closeIcon} style={styles.image} />
           </TouchableOpacity>
           {children}
@@ -104,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomModal;
+export default ExpenseModal;

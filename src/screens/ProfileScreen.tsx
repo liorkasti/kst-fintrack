@@ -34,7 +34,6 @@ const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  //TODO: add custom styles in theme.tsx
   container: {
     flex: 1,
     justifyContent: 'center',

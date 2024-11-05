@@ -1,32 +1,89 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {FC, useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity} from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import {useDispatch} from 'react-redux';
 import {amountStr, createStr, datePH, titleStr} from '../constants';
 import {COLORS} from '../constants/theme';
+import {useModal} from '../contexts/ModalContext';
+import useInputValidation from '../hooks/useInputValidation';
+import {addExpense} from '../redux/slices/expenses-slice';
+import {ExpenseType} from '../redux/types';
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
 
 interface ExpenseEditorProps {}
 
 const ExpenseEditor: FC<ExpenseEditorProps> = () => {
-  const [title, setTitle] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
+  const {
+    title,
+    setTitle,
+    amount,
+    setAmount,
+    titleError,
+    amountError,
+    validateInputs,
+  } = useInputValidation();
   const [formattedDate, setFormattedDate] = useState<string>('');
-  const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date>(new Date());
+  const [isDatePickerVisible, setIsDatePickerVisible] =
+    useState<boolean>(false);
+  const {closeModal} = useModal();
 
-  const showDatePicker = () => setOpen(true);
-  const hideDatePicker = () => setOpen(false);
+  const dispatch = useDispatch();
 
-  const handleConfirm = (selectedDate: Date) => {
+  const showDatePicker = () => setIsDatePickerVisible(true);
+  const hideDatePicker = () => setIsDatePickerVisible(false);
+
+  const handleDatePicker = (selectedDate: Date) => {
     setDate(selectedDate);
     setFormattedDate(formatDate(selectedDate));
     hideDatePicker();
-    console.log('A date has been picked: ', selectedDate);
+    // console.log('A date has been picked: ', selectedDate);
   };
 
-  const handleCreate = () => {};
+  const handleCreate = async () => {
+    try {
+      if (titleError) {
+        Alert.alert(titleError);
+      }
+      if (amountError) {
+        Alert.alert(amountError);
+      }
+      if (validateInputs() && title && amount && date) {
+        const newExpense: ExpenseType = {
+          id: Date.now().toString(),
+          title,
+          amount: parseFloat(amount),
+          date: formattedDate,
+        };
+        //TODO: date validation into hook
+        if (date) {
+        } else {
+          Alert.alert('Invalid date');
+        }
+        // Saving the expense to AsyncStorage
+        const savedExpenses = await AsyncStorage.getItem('expenses');
+        let localExpenses = savedExpenses ? JSON.parse(savedExpenses) : [];
+        localExpenses.push(newExpense);
+        await AsyncStorage.setItem('expenses', JSON.stringify(localExpenses));
 
+        dispatch(addExpense(newExpense));
+        setTitle('');
+        setAmount('');
+        setFormattedDate('');
+        closeModal();
+      }
+    } catch (error) {
+      console.log('Error saving expense:', error);
+    }
+  };
   return (
     <>
       <TextInput
@@ -57,14 +114,14 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
           </Text>
         )}
       </TouchableOpacity>
-      {open && (
+      {isDatePickerVisible && (
         <>
           <DatePicker
             modal
-            open={open}
+            open={isDatePickerVisible}
             date={date}
             mode="date"
-            onConfirm={handleConfirm}
+            onConfirm={handleDatePicker}
             onCancel={hideDatePicker}
             style={styles.datePicker}
             maximumDate={new Date()}
