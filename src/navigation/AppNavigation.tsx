@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 
 import {plusIcon} from '../assets';
 import BottomModal from '../components/BottomModal';
-import ExpenseModal from '../components/ExpenseModal';
+import ExpenseEditor from '../components/ExpenseEditor';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import {COLORS} from '../constants/theme';
@@ -17,10 +17,6 @@ const AppNavigation = () => {
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -42,8 +38,8 @@ const AppNavigation = () => {
         }}
       />
       <Tab.Screen
-        name={'ExpenseModal'}
-        component={ExpenseModal}
+        name={'ExpenseEditor'}
+        component={ExpenseEditor}
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (
@@ -74,7 +70,7 @@ const AppNavigation = () => {
                 title={'Create Expense'}
                 visible={isModalOpen}
                 onClose={() => setIsModalOpen(!isModalOpen)}>
-                <ExpenseModal onClose={handleCloseModal} />
+                <ExpenseEditor />
               </BottomModal>
             </View>
           ),

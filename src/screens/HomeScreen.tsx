@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {
   Image,
   SectionList,
@@ -11,33 +11,17 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {closeIcon} from '../assets';
 import {COLORS} from '../constants/theme';
-import {deleteExpense} from '../redux/slices/expenses-slice';
+import {
+  deleteExpense,
+  updateLocalStorage,
+} from '../redux/slices/expenses-slice';
 import {ExpenseSectionType, ExpenseType, RootStateType} from '../redux/types';
-
-export const useExpenseSections = (expenses: ExpenseType[]) => {
-  return useMemo(() => {
-    const sections: ExpenseSectionType[] = [];
-    let currentSection: {title: string; data: ExpenseType[]} | null = null;
-
-    expenses.forEach(expense => {
-      const expenseDate = expense.date;
-      if (!currentSection || currentSection.title !== expenseDate) {
-        currentSection = {title: expenseDate, data: [expense]};
-        sections.push(currentSection);
-      } else {
-        currentSection.data.push(expense);
-      }
-    });
-
-    return sections;
-  }, [expenses]); // Dependency array includes expenses
-};
 
 const HomeScreen = () => {
   const expensesRef = useRef([] as ExpenseType[]);
-  const {expenses} = useSelector((state: RootStateType) => state.expenses);
 
   const dispatch = useDispatch();
+  const {expenses} = useSelector((state: RootStateType) => state.expenses);
 
   const handleDeleteExpense = useCallback(
     async (expenseId: string) => {
@@ -45,6 +29,10 @@ const HomeScreen = () => {
     },
     [dispatch],
   );
+
+  useEffect(() => {
+    updateLocalStorage(expenses);
+  }, [expenses]);
 
   const renderExpenseItem = useCallback(
     ({item}: {item: ExpenseType}) => (
@@ -66,10 +54,30 @@ const HomeScreen = () => {
     [],
   );
 
-  const expenseSections = useExpenseSections(expenses);
+  const expenseSections = useMemo(() => {
+    expensesRef.current = expenses;
 
-  const totalExpenses = 200;
-  console.log(expensesRef.current);
+    const sections: ExpenseSectionType[] = [];
+    let currentSection: {title: string; data: ExpenseType[]} | null = null;
+
+    expensesRef.current.forEach(expense => {
+      const expenseDate = expense.date;
+      if (!currentSection || currentSection.title !== expenseDate) {
+        currentSection = {title: expenseDate, data: [expense]};
+        sections.push(currentSection);
+      } else {
+        currentSection.data.push(expense);
+      }
+    });
+
+    return sections;
+  }, [expenses]);
+
+  //TODO: optimize
+  const totalExpenses = useMemo(
+    () => expenses.reduce((total, expense) => total + expense.amount, 0),
+    [expenses],
+  );
 
   return (
     <>
@@ -113,38 +121,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 17,
   },
-  filterWrapper: {
-    alignItems: 'flex-end',
-    paddingTop: 37,
-    paddingBottom: 11,
-  },
-  containerIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 4,
-  },
-  removeIcon: {width: 20, height: 20, marginRight: 10},
-  clearFilterButton: {},
-  clearFilterText: {
-    padding: 10,
-    color: COLORS.thirdary,
-  },
-  filterButton: {
-    flexDirection: 'row',
-    marginRight: 11,
-    paddingVertical: 4,
-    paddingHorizontal: 13,
-    backgroundColor: COLORS.filter,
-    borderRadius: 60,
-    alignItems: 'center',
-  },
-  filterText: {
-    fontSize: 14,
-    marginLeft: 10,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: COLORS.title,
-  },
   paymentTitle: {
     color: '#3E3E3E',
     fontSize: 16,
@@ -164,6 +140,11 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     backgroundColor: '#F4EEEE',
     fontWeight: '400',
+  },
+  removeIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   title: {
     fontSize: 24,
