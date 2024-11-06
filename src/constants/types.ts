@@ -2,8 +2,14 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TextInputProps} from 'react-native';
 
-export interface UserStateType {
-  username: string;
+export interface StoreUserType {
+  userName: string;
+  id: string;
+  isLoading: boolean;
+  error: string | null;
+}
+export interface StoreUserPayload {
+  userName: string;
   id: string;
 }
 export interface ExpenseType {
@@ -17,6 +23,8 @@ export interface ExpensesStateType {
   expenses: ExpenseType[];
   filteredData: ExpenseType[];
   filters: FiltersType;
+  isLoading: boolean;
+  error: string | null;
 }
 export interface ExpenseSectionType {
   title: string;
@@ -26,11 +34,12 @@ export interface ExpenseSectionType {
 export interface FiltersType {
   title: string | '';
   date: string | '';
+  amount: string | '';
 }
 
 export interface RootStateType {
   expenses: ExpensesStateType;
-  user: UserStateType;
+  user: StoreUserType;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }

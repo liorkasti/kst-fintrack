@@ -22,7 +22,6 @@ type ExpenseModalProps = {
 const ExpenseModal: FC<ExpenseModalProps> = ({children}) => {
   const {isModalOpen, modalTitle, closeModal} = useModal();
   const modalTopPadding = useModalTopPadding(modalTitle);
-  console.log({isModalOpen, modalTitle, closeModal});
 
   if (!isModalOpen) return null;
 

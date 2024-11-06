@@ -7,7 +7,7 @@ import {ModalProvider} from './contexts/ModalContext';
 
 const App = () => {
   return (
-    <Provider store={store}>
+    <Provider store={store} /* persistor={persistor} */>
       <ModalProvider>
         <StatusBar
           barStyle="dark-content"

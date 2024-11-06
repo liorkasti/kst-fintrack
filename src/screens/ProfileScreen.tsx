@@ -4,10 +4,9 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {signOutStr, totalExpensesItemsStr} from '../constants';
-import {removeUser} from '../redux/slices/user-slice';
-import {RootStateType} from '../constants/types';
-import {RootStackParamListType} from '../constants/types';
 import {COLORS} from '../constants/theme';
+import {RootStackParamListType, RootStateType} from '../constants/types';
+import {removeUser, signOutUser} from '../redux/slices/user-slice';
 
 type ProfileScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -23,6 +22,7 @@ const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
 
   const handleSignout = () => {
     dispatch(removeUser());
+    signOutUser;
     navigation.navigate('WelcomeScreen');
   };
   return (
@@ -41,7 +41,6 @@ const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  //TODO: add custom styles in theme.tsx
   container: {
     flex: 1,
     justifyContent: 'center',

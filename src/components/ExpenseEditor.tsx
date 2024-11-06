@@ -46,7 +46,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
-  // const [titleFilter, setTitleFilter] = useState<string>('');
+  const [titleFilter, setTitleFilter] = useState<string>('');
 
   const {modalTitle, closeModal} = useModal();
   const filterFnc = modalTitle === filtersStr;
@@ -60,7 +60,6 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
     setDate(selectedDate);
     setFormattedDate(formatDate(selectedDate));
     hideDatePicker();
-    // console.log('A date has been picked: ', selectedDate);
   };
 
   const handleCreate = async () => {
@@ -101,16 +100,16 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   };
 
   const handleFilter = (): void => {
-    dispatch(setFilterTitle(title));
+    dispatch(setFilterTitle(titleFilter));
     dispatch(setFilterDate(formattedDate));
     dispatch(filterExpenses());
-    closeModal;
     dispatch(clearFilters());
+    closeModal;
   };
 
   const onClean = (): void => {
-    // setTitleFilter('');
-    // setFormattedDate('');
+    setTitleFilter('');
+    setFormattedDate('');
     dispatch(clearFilters());
   };
 
