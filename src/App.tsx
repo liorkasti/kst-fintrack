@@ -12,18 +12,18 @@ const App = () => {
   const queryClient = usePersistedQueryClient();
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <QueryClientProvider client={queryClient}>
-          <ModalProvider>
-            <StatusBar
-              barStyle="dark-content"
-              backgroundColor="transparent"
-              translucent={true}
-            />
-            <RootStackScreen />
-          </ModalProvider>{' '}
-        </QueryClientProvider>
-      </PersistGate>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent={true}
+          />
+          <RootStackScreen />
+        </ModalProvider>
+      </QueryClientProvider>
+      {/* </PersistGate> */}
     </Provider>
   );
 };

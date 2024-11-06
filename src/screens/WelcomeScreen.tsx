@@ -7,6 +7,7 @@ import {COLORS} from '../constants/theme';
 import useInputValidation from '../hooks/useInputValidation';
 import {setUser} from '../store/slices/user-slice';
 import {RootStackParamListType} from '../constants/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface WelcomeScreenProps {
   navigation: NativeStackNavigationProp<
@@ -28,6 +29,7 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
         setId(userId);
         const user = {fullName: name, id};
         dispatch(setUser(user));
+        await AsyncStorage.setItem('user', JSON.stringify({user}));
         setName('');
         setId('');
         navigation.navigate('AppNavigation');

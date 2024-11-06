@@ -5,10 +5,10 @@ import {
 } from '@react-navigation/native-stack';
 import React, {FC} from 'react';
 import {useSelector} from 'react-redux';
-import {RootStateType} from '../constants/types';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
 import AppNavigation from './AppNavigation';
+import {RootStateType} from '../constants/types';
 
 const RootStack = createNativeStackNavigator();
 

@@ -26,13 +26,8 @@ const userSlice = createSlice({
 export const {setUser, clearUser} = userSlice.actions;
 
 export const signOut = () => async dispatch => {
-  // Clear Redux state
   dispatch(clearUser());
-
-  // Clear React Query cache
   queryClient.clear();
-
-  // Clear persisted React Query cache
   await AsyncStorage.removeItem('QUERY_CACHE');
 };
 

@@ -1,7 +1,11 @@
 import {useQuery} from 'react-query';
+import {
+  ExpensesStateType,
+  ExpenseType,
+  FilterParamsType,
+} from '../constants/types';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store';
-import {ExpenseType, FilterParamsType} from '../constants/types';
 
 const fetchFilteredExpenses = (
   expenses: ExpenseType[],
@@ -21,14 +25,43 @@ const fetchFilteredExpenses = (
   });
 };
 
-export const useFilteredExpenses = (filterParams: FilterParamsType) => {
-  const expenses = useSelector((state: RootState) => state.expenses.expenses);
+// export const useFilteredExpenses = (filterParams: FilterParamsType) => {
+//   const expenses = useSelector((state: RootState) => state.expenses.expenses);
 
-  return useQuery(
-    ['expenses', filterParams],
-    () => fetchFilteredExpenses(expenses, filterParams),
-    {
-      keepPreviousData: true,
-    },
+//   return useQuery(
+//     ['expenses', filterParams],
+//     () => fetchFilteredExpenses(expenses, filterParams),
+//     {
+//       keepPreviousData: true,
+//     },
+//   );
+// };
+
+export const useFilteredExpenses = (
+  filterParams: FilterParamsType,
+  // expenses: ExpensesStateType,
+): ExpensesStateType => {
+  const expenses = useSelector((state: RootState) => state.expenses);
+  const fallback: ExpensesStateType | [] = [];
+  const {
+    isError,
+    isLoading,
+    data = fallback,
+    error,
+    isSuccess,
+  } = useQuery(['expenses'], () =>
+    fetchFilteredExpenses(expenses, filterParams),
   );
+  // console.log({isError, isLoading, data, error, isSuccess});
+  if (isSuccess && !isError) {
+    return {
+      data: data as ExpenseType[],
+      isLoading,
+    };
+  }
+  return {
+    isError,
+    isLoading,
+    error: error as Error,
+  };
 };

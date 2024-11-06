@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {AMOUNT, CLEAN, DATE, EDIT, FILTERS, TITLE} from '../constants';
 import {COLORS} from '../constants/theme';
 import {useModal} from '../contexts/ModalContext';
@@ -26,6 +26,8 @@ import Button from './Button';
 import {useQueryClient} from 'react-query';
 import {ExpenseType, FilterParamsType} from '../constants/types';
 import {queryClient} from '../App';
+import {useFilteredExpenses} from '../hooks/useFilteredExpenses';
+import {RootState} from '../store';
 
 interface ExpenseEditorProps {}
 
@@ -39,6 +41,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
     amountError,
     validateInputs,
   } = useInputValidation();
+  const expenses = useSelector((state: RootState) => state.expenses);
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [date, setDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setIsDatePickerVisible] =
@@ -91,7 +94,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
         setTitle('');
         setAmount('');
         setFormattedDate('');
-        closeModal;
+        closeModal();
       }
     } catch (error) {
       console.log('Error saving expense:', error);
@@ -142,11 +145,16 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
     // dispatch(clearFilters());
 
     const filterParams: FilterParamsType = {};
-    if (titleFilter) filterParams.title = titleFilter;
-    if (formattedDate) filterParams.amount = parseFloat(amountFilter);
+    if (title) filterParams.title = title;
+    if (amount) filterParams.amount = parseFloat(amount);
     if (formattedDate) filterParams.date = formattedDate;
+    console.log({filterParams});
 
-    queryClient.setQueryData(['expenses', filterParams], filterParams);
+    const {data, isLoading, isFetching} = useFilteredExpenses(
+      expenses,
+      filterParams,
+    );
+    console.log({data});
 
     closeModal;
   };

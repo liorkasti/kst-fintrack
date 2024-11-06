@@ -10,6 +10,7 @@ export const usePersistedQueryClient = () => {
   useEffect(() => {
     const restoreCache = async () => {
       const cacheString = await AsyncStorage.getItem(QUERY_CACHE_KEY);
+
       if (cacheString) {
         queryClient.setQueryData(JSON.parse(cacheString));
       }

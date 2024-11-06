@@ -32,6 +32,7 @@ const HomeScreen = () => {
   const expenses = useSelector(
     (state: RootStateType) => state.expenses.expenses,
   );
+
   const {openModal} = useModal();
   const dispatch = useDispatch();
 
@@ -78,7 +79,7 @@ const HomeScreen = () => {
           <Image source={editIcon} style={styles.editIcon} />
         </TouchableOpacity> */}
         <Text style={styles.paymentTitle}>{item.title}</Text>
-        <Text style={styles.paymentTitle}>{item.amount}</Text>
+        <Text style={styles.paymentTitle}>${item.amount}</Text>
       </View>
     ),
     [handleDeleteExpense],
@@ -90,7 +91,7 @@ const HomeScreen = () => {
     ),
     [],
   );
-  console.log({expenses, filteredExpenses});
+  // console.log({expenses, filteredExpenses});
 
   const expenseSections = useMemo(() => {
     filteredExpensesRef.current =
