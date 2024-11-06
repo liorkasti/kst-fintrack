@@ -13,13 +13,13 @@ import AppNavigation from './AppNavigation';
 const RootStack = createNativeStackNavigator();
 
 const RootStackScreen: FC = () => {
-  const {userName} = useSelector((state: RootStateType) => state.user);
+  const {fullName} = useSelector((state: RootStateType) => state.user);
 
   const getAppNavigationOptions = (): NativeStackNavigationOptions => {
-    if (userName) {
+    if (fullName) {
       return {
         headerShown: true,
-        title: userName,
+        title: fullName,
         headerTitleAlign: 'center',
         headerBackVisible: false,
       };

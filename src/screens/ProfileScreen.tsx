@@ -3,10 +3,11 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {signOutStr, totalExpensesItemsStr} from '../constants';
+import {SIGN_OUT, TOTAL_EXPENSES_ITEMS, WELCOME_SCREEN} from '../constants';
 import {COLORS} from '../constants/theme';
+import {clearUser, removeUser, signOutUser} from '../store/slices/user-slice';
 import {RootStackParamListType, RootStateType} from '../constants/types';
-import {removeUser, signOutUser} from '../redux/slices/user-slice';
+import {persistor} from '../store';
 
 type ProfileScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -18,22 +19,26 @@ type ProfileScreenProps = {
 const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
 
-  const {expenses} = useSelector((state: RootStateType) => state.expenses);
+  const expenses = useSelector(
+    (state: RootStateType) => state.expenses.expenses,
+  );
 
-  const handleSignout = () => {
-    dispatch(removeUser());
+  const handleSignout = async () => {
+    // dispatch(removeUser());
+    dispatch(clearUser());
     signOutUser;
-    navigation.navigate('WelcomeScreen');
+    await persistor.purge();
+    navigation.replace(WELCOME_SCREEN);
   };
   return (
     <View style={styles.container}>
       <View style={styles.totalLine}>
-        <Text style={styles.text}>{totalExpensesItemsStr}</Text>
+        <Text style={styles.text}>{TOTAL_EXPENSES_ITEMS}</Text>
         <Text style={styles.total}>{expenses.length}</Text>
       </View>
       <View style={styles.separator} />
       <TouchableOpacity onPress={handleSignout}>
-        <Text style={styles.text}>{signOutStr}</Text>
+        <Text style={styles.text}>{SIGN_OUT}</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
     </View>

@@ -1,14 +1,12 @@
-import React, {FC, useEffect, useState} from 'react';
-import {Alert, StyleSheet, TextInput, View} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React, {FC, useState} from 'react';
+import {Alert, StyleSheet, TextInput, View} from 'react-native';
+import {useDispatch} from 'react-redux';
 import Button from '../components/Button';
-import useLogin from '../hooks/useLogin';
-import {RootStackParamListType, StoreUserPayload} from '../constants/types';
 import {COLORS} from '../constants/theme';
 import useInputValidation from '../hooks/useInputValidation';
-import {saveUser, storeUser} from '../redux/slices/user-slice';
-import {useDispatch} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setUser} from '../store/slices/user-slice';
+import {RootStackParamListType} from '../constants/types';
 
 interface WelcomeScreenProps {
   navigation: NativeStackNavigationProp<
@@ -28,9 +26,8 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({navigation}) => {
       try {
         const userId = Math.random().toString(36).substr(2, 5);
         setId(userId);
-        const user = {userName: name, id};
-        dispatch(storeUser(user));
-
+        const user = {fullName: name, id};
+        dispatch(setUser(user));
         setName('');
         setId('');
         navigation.navigate('AppNavigation');

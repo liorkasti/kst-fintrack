@@ -9,6 +9,7 @@ import {COLORS} from '../constants/theme';
 import {useModal} from '../contexts/ModalContext';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import {HOME, PROFILE} from '../constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,14 +23,14 @@ const AppNavigation = () => {
         tabBarStyle: {height: 87},
       }}>
       <Tab.Screen
-        name={'Home'}
+        name={HOME}
         component={HomeScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => (
             //TODO: React.FC
             <Text style={{color: focused ? COLORS.primary : COLORS.secondary}}>
-              Home
+              {HOME}
             </Text>
           ),
         }}
@@ -79,7 +80,7 @@ const AppNavigation = () => {
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <Text style={{color: focused ? COLORS.primary : COLORS.secondary}}>
-              Profile
+              {PROFILE}
             </Text>
           ),
         }}

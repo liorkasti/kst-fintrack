@@ -13,7 +13,7 @@ import {COLORS} from '../constants/theme';
 import {useModal} from '../contexts/ModalContext';
 import {useModalTopPadding} from '../hooks';
 import {hightStatusBar, HIT_SLOP_10} from '../utils';
-import {filtersStr} from '../constants';
+import {FILTERS} from '../constants';
 
 type ExpenseModalProps = {
   children: React.ReactNode;
@@ -42,7 +42,7 @@ const ExpenseModal: FC<ExpenseModalProps> = ({children}) => {
           <Text
             style={[
               styles.modalTitle,
-              {marginTop: modalTitle === filtersStr ? -20 : 0},
+              {marginTop: modalTitle === FILTERS ? -20 : 0},
             ]}>
             {modalTitle}
           </Text>

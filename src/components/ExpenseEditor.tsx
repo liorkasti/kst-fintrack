@@ -9,15 +9,8 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch} from 'react-redux';
-import {
-  amountStr,
-  cleanString,
-  datePH,
-  filtersStr,
-  titleStr,
-} from '../constants';
+import {AMOUNT, CLEAN, DATE, EDIT, FILTERS, TITLE} from '../constants';
 import {COLORS} from '../constants/theme';
-import {ExpenseType} from '../constants/types';
 import {useModal} from '../contexts/ModalContext';
 import useInputValidation from '../hooks/useInputValidation';
 import {
@@ -26,9 +19,13 @@ import {
   filterExpenses,
   setFilterDate,
   setFilterTitle,
-} from '../redux/slices/expenses-slice';
+  updateExpense,
+} from '../store/slices/expenses-slice';
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
+import {useQueryClient} from 'react-query';
+import {ExpenseType, FilterParamsType} from '../constants/types';
+import {queryClient} from '../App';
 
 interface ExpenseEditorProps {}
 
@@ -47,9 +44,11 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
   const [titleFilter, setTitleFilter] = useState<string>('');
+  const [amountFilter, setAmountFilter] = useState<string>('');
 
   const {modalTitle, closeModal} = useModal();
-  const filterFnc = modalTitle === filtersStr;
+  const filterFnc = modalTitle === FILTERS;
+  const editFnc = modalTitle === EDIT;
 
   const dispatch = useDispatch();
 
@@ -99,18 +98,66 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
     }
   };
 
+  const handleEdit = async () => {
+    try {
+      if (titleError) {
+        Alert.alert(titleError);
+      }
+      if (amountError) {
+        Alert.alert(amountError);
+      }
+      if (validateInputs() && title && amount && date) {
+        const newExpense: ExpenseType = {
+          id: Date.now().toString(),
+          title,
+          amount: parseFloat(amount),
+          date: formattedDate,
+        };
+        //TODO: date validation into hook
+        if (date) {
+        } else {
+          Alert.alert('Invalid date');
+        }
+        // Saving the expense to AsyncStorage
+        const savedExpenses = await AsyncStorage.getItem('expenses');
+        let localExpenses = savedExpenses ? JSON.parse(savedExpenses) : [];
+        localExpenses.push(newExpense);
+        await AsyncStorage.setItem('expenses', JSON.stringify(localExpenses));
+
+        dispatch(updateExpense(newExpense));
+        setTitle('');
+        setAmount('');
+        setFormattedDate('');
+        closeModal;
+      }
+    } catch (error) {
+      console.log('Error saving expense:', error);
+    }
+  };
+
   const handleFilter = (): void => {
-    dispatch(setFilterTitle(titleFilter));
-    dispatch(setFilterDate(formattedDate));
-    dispatch(filterExpenses());
-    dispatch(clearFilters());
+    // dispatch(setFilterTitle(titleFilter));
+    // dispatch(setFilterDate(formattedDate));
+    // dispatch(filterExpenses());
+    // dispatch(clearFilters());
+
+    const filterParams: FilterParamsType = {};
+    if (titleFilter) filterParams.title = titleFilter;
+    if (formattedDate) filterParams.amount = parseFloat(amountFilter);
+    if (formattedDate) filterParams.date = formattedDate;
+
+    queryClient.setQueryData(['expenses', filterParams], filterParams);
+
     closeModal;
   };
 
   const onClean = (): void => {
     setTitleFilter('');
+    setAmountFilter('');
     setFormattedDate('');
-    dispatch(clearFilters());
+    queryClient.setQueryData(['expenses', {}], {});
+    // dispatch(clearFilters());
+    closeModal;
   };
 
   return (
@@ -121,19 +168,19 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
             style={styles.cleanButton}
             onPress={onClean}
             hitSlop={HIT_SLOP_10}>
-            <Text style={styles.cleanText}>{cleanString}</Text>
+            <Text style={styles.cleanText}>{CLEAN}</Text>
           </TouchableOpacity>
         )}
         <TextInput
           style={styles.input}
-          placeholder={titleStr}
+          placeholder={TITLE}
           placeholderTextColor={COLORS.placeholder}
           value={title}
           onChangeText={setTitle}
         />
         <TextInput
           style={styles.input}
-          placeholder={amountStr}
+          placeholder={AMOUNT}
           placeholderTextColor={COLORS.placeholder}
           value={amount}
           onChangeText={setAmount}
@@ -149,7 +196,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
           <Text style={styles.inputTitle}>{formattedDate}</Text>
         ) : (
           <Text style={[styles.inputTitle, {color: COLORS.placeholder}]}>
-            {datePH}
+            {DATE}
           </Text>
         )}
       </TouchableOpacity>
@@ -170,7 +217,9 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
       )}
       <Button
         text={modalTitle}
-        onButtonPress={filterFnc ? handleFilter : handleCreate}
+        onButtonPress={
+          filterFnc ? handleFilter : editFnc ? handleEdit : handleCreate
+        }
       />
     </>
   );

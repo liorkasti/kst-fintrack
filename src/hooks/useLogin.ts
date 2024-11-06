@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {storeUser} from '../redux/slices/user-slice';
+import {storeUser} from '../store/slices/user-slice';
 import useInputValidation from './useInputValidation';
 
 const useLogin = () => {
@@ -19,7 +19,7 @@ const useLogin = () => {
           const {id: storedId, name: storedName} = JSON.parse(storedUser);
           setId(storedId);
           setName(storedName);
-          dispatch(storeUser({userName: storedName, id: storedId}));
+          dispatch(storeUser({fullName: storedName, id: storedId}));
         }
       } catch (error) {
         console.error(error);
@@ -31,7 +31,7 @@ const useLogin = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(storeUser({userName: name, id: id}));
+      dispatch(storeUser({fullName: name, id: id}));
     }
   }, [id, dispatch, name]);
 
