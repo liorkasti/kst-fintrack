@@ -1,7 +1,8 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {ExpensesStateType, ExpenseType} from '../../constants/types';
 import {dummyExpenses} from '../../utils/dummyData';
 import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialState: ExpensesStateType = {
   expenses: dummyExpenses,
@@ -12,12 +13,25 @@ const initialState: ExpensesStateType = {
   },
 };
 
+const fetchExpenses = createAsyncThunk('expenses/fetch', async () => {
+  try {
+    await AsyncStorage.setItem('expenses', JSON.stringify(expenses));
+    console.log(await AsyncStorage.getItem('expenses'));
+  } catch (error) {
+    console.log('Error updating local storage:', error);
+  }
+});
+
 const expensesSlice = createSlice({
   name: 'expenses',
   initialState,
   reducers: {
     addExpense: (state, action: PayloadAction<ExpenseType>) => {
-      state.expenses.push(action.payload);
+      const newExpense = action.payload;
+      state.expenses = [...state.expenses, newExpense];
+      state.expenses.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
     },
     updateExpense: (state, action: PayloadAction<ExpenseType>) => {
       const index = state.expenses.findIndex(e => e.id === action.payload.id);
@@ -72,6 +86,11 @@ const expensesSlice = createSlice({
         console.log('Filter Expenses Error', error);
       }
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(fetchExpenses.fulfilled, (state, action) => {
+      state.expenses = action.payload;
+    });
   },
 });
 

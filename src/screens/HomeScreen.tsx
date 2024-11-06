@@ -10,7 +10,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 
 import {closeIcon, filterIcon} from '../assets';
-import {CLEAN_FILTER, FILTER, FILTERS} from '../constants';
+import {CLEAN_FILTER, FILTER, FILTERS, TOTAL_EXPENSES} from '../constants';
 import {COLORS} from '../constants/theme';
 import {
   ExpenseSectionType,
@@ -96,8 +96,10 @@ const HomeScreen = () => {
     <>
       <View style={styles.container}>
         <View style={styles.topWrapper}>
-          <Text style={styles.totalTile}>Total Expenses: {totalExpenses}</Text>
-
+          <View style={styles.totalSumContainer}>
+            <Text style={styles.totalTile}>{TOTAL_EXPENSES}</Text>
+            <Text style={styles.totalSum}> {totalExpenses}</Text>
+          </View>
           <View style={styles.filterWrapper}>
             <TouchableOpacity
               style={styles.filterButton}
@@ -143,7 +145,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 62,
   },
+  totalSumContainer: {
+    flexDirection: 'row',
+  },
   totalTile: {
+    color: COLORS.title,
+    paddingRight: 3,
+    paddingTop: 19,
+    fontWeight: '700',
+    fontSize: 17,
+  },
+  totalSum: {
     color: COLORS.title,
     paddingRight: 3,
     paddingTop: 19,
