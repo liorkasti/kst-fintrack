@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useCallback, useMemo, useRef} from 'react';
 import {
   Image,
   SectionList,
@@ -10,57 +10,26 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 
 import {closeIcon, filterIcon} from '../assets';
-import {CLEAN_FILTER, FILTERS} from '../constants';
+import {CLEAN_FILTER, FILTER, FILTERS} from '../constants';
 import {COLORS} from '../constants/theme';
-import {useModal} from '../contexts/ModalContext';
-import {
-  clearFilterData,
-  deleteExpense,
-  updateLocalStorage,
-} from '../store/slices/expenses-slice';
 import {
   ExpenseSectionType,
   ExpenseType,
   RootStateType,
 } from '../constants/types';
+import {useModal} from '../contexts/ModalContext';
+import {clearFilterData, deleteExpense} from '../store/slices/expenses-slice';
 import {HIT_SLOP_10} from '../utils';
-import {useQuery, useQueryClient} from 'react-query';
-import {FilterParamsType} from '../constants/types';
 
 const HomeScreen = () => {
   const filteredExpensesRef = useRef([] as ExpenseType[]);
-  const expenses = useSelector(
-    (state: RootStateType) => state.expenses.expenses,
+  const {expenses, filteredData} = useSelector(
+    (state: RootStateType) => state.expenses,
   );
+  console.log({filteredData});
 
   const {openModal} = useModal();
   const dispatch = useDispatch();
-
-  const fetchFilteredExpenses = async (filterParams: FilterParamsType) => {
-    // Simulating API call with filtering
-    return expenses.filter((expense: ExpenseType) => {
-      if (
-        filterParams.title &&
-        !expense.title.toLowerCase().includes(filterParams.title.toLowerCase())
-      ) {
-        return false;
-      }
-      if (filterParams.amount && expense.amount !== filterParams.amount) {
-        return false;
-      }
-      if (filterParams.date && expense.date !== filterParams.date) {
-        return false;
-      }
-      return true;
-    });
-  };
-
-  const {data: filteredExpenses} = useQuery(['expenses', {}], () =>
-    fetchFilteredExpenses({}),
-  );
-
-  const totalAmount =
-    filteredExpenses?.reduce((sum, expense) => sum + expense.amount, 0) || 0;
 
   const handleDeleteExpense = useCallback(
     async (expenseId: string) => {
@@ -77,7 +46,7 @@ const HomeScreen = () => {
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={() => {}}>
           <Image source={editIcon} style={styles.editIcon} />
-        </TouchableOpacity> */}
+          </TouchableOpacity> */}
         <Text style={styles.paymentTitle}>{item.title}</Text>
         <Text style={styles.paymentTitle}>${item.amount}</Text>
       </View>
@@ -85,17 +54,21 @@ const HomeScreen = () => {
     [handleDeleteExpense],
   );
 
+  const onClear = useCallback(() => {
+    dispatch(clearFilterData());
+    filteredExpensesRef.current = expenses;
+  }, [dispatch, expenses]);
+
   const renderSectionHeader = useCallback(
     ({section: {title}}: {section: {title: string}}) => (
       <Text style={styles.sectionHeader}>{title}</Text>
     ),
     [],
   );
-  // console.log({expenses, filteredExpenses});
 
   const expenseSections = useMemo(() => {
     filteredExpensesRef.current =
-      filteredExpenses?.length > 0 ? filteredExpenses : expenses;
+      filteredData.length > 0 ? filteredData : expenses;
 
     const sections: ExpenseSectionType[] = [];
     let currentSection: {title: string; data: ExpenseType[]} | null = null;
@@ -111,7 +84,7 @@ const HomeScreen = () => {
     });
 
     return sections;
-  }, [expenses, filteredExpenses]);
+  }, [expenses, filteredData]);
 
   //TODO: optimize
   const totalExpenses = useMemo(
@@ -123,16 +96,24 @@ const HomeScreen = () => {
     <>
       <View style={styles.container}>
         <View style={styles.topWrapper}>
-          <Text style={styles.totalTile}>Total Expenses: {totalAmount}</Text>
+          <Text style={styles.totalTile}>Total Expenses: {totalExpenses}</Text>
 
           <View style={styles.filterWrapper}>
             <TouchableOpacity
               style={styles.filterButton}
               onPress={() => openModal(FILTERS)}>
               <Image source={filterIcon} style={styles.containerIcon} />
-              <Text style={styles.filterText}>{FILTERS}</Text>
+              <Text style={styles.filterText}>{FILTER}</Text>
             </TouchableOpacity>
           </View>
+          {filteredData?.length > 0 && (
+            <TouchableOpacity
+              style={styles.clearFilterButton}
+              onPress={onClear}
+              hitSlop={HIT_SLOP_10}>
+              <Text style={styles.clearFilterText}>{CLEAN_FILTER}</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <SectionList
           sections={expenseSections}
@@ -183,12 +164,11 @@ const styles = StyleSheet.create({
   editIcon: {width: 20, height: 20, marginRight: 10},
   clearFilterButton: {},
   clearFilterText: {
-    padding: 10,
+    marginTop: -37,
     color: COLORS.thirdary,
   },
   filterButton: {
     flexDirection: 'row',
-    height: 28,
     marginRight: 11,
     paddingVertical: 4,
     paddingHorizontal: 13,

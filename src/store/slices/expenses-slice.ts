@@ -1,9 +1,15 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {ExpensesStateType, ExpenseType} from '../../constants/types';
 import {dummyExpenses} from '../../utils/dummyData';
+import {Alert} from 'react-native';
 
 const initialState: ExpensesStateType = {
   expenses: dummyExpenses,
+  filteredData: [],
+  filters: {
+    title: '',
+    date: '',
+  },
 };
 
 const expensesSlice = createSlice({
@@ -22,8 +28,61 @@ const expensesSlice = createSlice({
     deleteExpense: (state, action: PayloadAction<string>) => {
       state.expenses = state.expenses.filter(e => e.id !== action.payload);
     },
+    setFilterTitle: (state, action: PayloadAction<string | ''>) => {
+      state.filters.title = action.payload;
+    },
+    setFilterDate: (state, action: PayloadAction<string | ''>) => {
+      state.filters.date = action.payload;
+    },
+    clearFilters: state => {
+      state.filters.title = '';
+      state.filters.date = '';
+    },
+    clearFilterData: state => {
+      state.filteredData = [];
+    },
+    filterExpenses: state => {
+      try {
+        const {title, date} = state.filters;
+        const {expenses} = state;
+        console.log({title, date});
+
+        let filteredData = [...expenses]; // TODO: use immer js
+
+        if (title && date) {
+          filteredData = filteredData.filter(
+            expense =>
+              expense?.date === date &&
+              expense.title.toLowerCase().includes(title.toLowerCase()),
+          );
+        } else if (title) {
+          filteredData = filteredData.filter(expense =>
+            expense.title.toLowerCase().includes(title.toLowerCase()),
+          );
+        } else if (date) {
+          filteredData = filteredData.filter(expense => expense?.date === date);
+        }
+
+        state.filteredData = filteredData;
+
+        if (filteredData.length < 1) {
+          Alert.alert('Sorry!', 'No results found.');
+        }
+      } catch (error) {
+        console.log('Filter Expenses Error', error);
+      }
+    },
   },
 });
 
-export const {addExpense, updateExpense, deleteExpense} = expensesSlice.actions;
+export const {
+  addExpense,
+  updateExpense,
+  deleteExpense,
+  setFilterTitle,
+  setFilterDate,
+  clearFilters,
+  filterExpenses,
+  clearFilterData,
+} = expensesSlice.actions;
 export default expensesSlice.reducer;

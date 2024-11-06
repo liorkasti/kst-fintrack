@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {AMOUNT, CLEAN, DATE, EDIT, FILTERS, TITLE} from '../constants';
 import {COLORS} from '../constants/theme';
+import {ExpenseType} from '../constants/types';
 import {useModal} from '../contexts/ModalContext';
 import useInputValidation from '../hooks/useInputValidation';
 import {
@@ -23,11 +24,6 @@ import {
 } from '../store/slices/expenses-slice';
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
-import {useQueryClient} from 'react-query';
-import {ExpenseType, FilterParamsType} from '../constants/types';
-import {queryClient} from '../App';
-import {useFilteredExpenses} from '../hooks/useFilteredExpenses';
-import {RootState} from '../store';
 
 interface ExpenseEditorProps {}
 
@@ -41,13 +37,10 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
     amountError,
     validateInputs,
   } = useInputValidation();
-  const expenses = useSelector((state: RootState) => state.expenses);
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [date, setDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setIsDatePickerVisible] =
     useState<boolean>(false);
-  const [titleFilter, setTitleFilter] = useState<string>('');
-  const [amountFilter, setAmountFilter] = useState<string>('');
 
   const {modalTitle, closeModal} = useModal();
   const filterFnc = modalTitle === FILTERS;
@@ -139,53 +132,36 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
   };
 
   const handleFilter = (): void => {
-    // dispatch(setFilterTitle(titleFilter));
-    // dispatch(setFilterDate(formattedDate));
-    // dispatch(filterExpenses());
-    // dispatch(clearFilters());
-
-    const filterParams: FilterParamsType = {};
-    if (title) filterParams.title = title;
-    if (amount) filterParams.amount = parseFloat(amount);
-    if (formattedDate) filterParams.date = formattedDate;
-    console.log({filterParams});
-
-    const {data, isLoading, isFetching} = useFilteredExpenses(
-      expenses,
-      filterParams,
-    );
-    console.log({data});
-
-    closeModal;
+    dispatch(setFilterTitle(title));
+    dispatch(setFilterDate(formattedDate));
+    dispatch(filterExpenses());
+    dispatch(clearFilters());
+    closeModal();
   };
 
   const onClean = (): void => {
-    setTitleFilter('');
-    setAmountFilter('');
-    setFormattedDate('');
-    queryClient.setQueryData(['expenses', {}], {});
-    // dispatch(clearFilters());
-    closeModal;
+    dispatch(clearFilters());
+    closeModal();
   };
 
   return (
     <>
-      <>
-        {filterFnc && (
-          <TouchableOpacity
-            style={styles.cleanButton}
-            onPress={onClean}
-            hitSlop={HIT_SLOP_10}>
-            <Text style={styles.cleanText}>{CLEAN}</Text>
-          </TouchableOpacity>
-        )}
-        <TextInput
-          style={styles.input}
-          placeholder={TITLE}
-          placeholderTextColor={COLORS.placeholder}
-          value={title}
-          onChangeText={setTitle}
-        />
+      {filterFnc && (
+        <TouchableOpacity
+          style={styles.cleanButton}
+          onPress={onClean}
+          hitSlop={HIT_SLOP_10}>
+          <Text style={styles.cleanText}>{CLEAN}</Text>
+        </TouchableOpacity>
+      )}
+      <TextInput
+        style={styles.input}
+        placeholder={TITLE}
+        placeholderTextColor={COLORS.placeholder}
+        value={title}
+        onChangeText={setTitle}
+      />
+      {!filterFnc && (
         <TextInput
           style={styles.input}
           placeholder={AMOUNT}
@@ -194,7 +170,7 @@ const ExpenseEditor: FC<ExpenseEditorProps> = () => {
           onChangeText={setAmount}
           keyboardType="numeric"
         />
-      </>
+      )}
 
       <TouchableOpacity
         style={styles.input}

@@ -1,8 +1,7 @@
 import {Platform} from 'react-native';
 import {FILTERS} from '../constants';
-import {ModalTitle} from '../constants/types';
 
-export const useModalTopPadding = (title: ModalTitle): number =>
+export const useModalTopPadding = (title: string): number =>
   title === FILTERS
     ? Platform.OS === 'ios'
       ? 210
