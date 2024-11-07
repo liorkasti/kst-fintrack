@@ -32,7 +32,6 @@ const HomeScreen = () => {
   const {expenses, filteredData} = useSelector(
     (state: RootStateType) => state.expenses,
   );
-  console.log({filteredData});
 
   const {openModal} = useModal();
   const dispatch = useDispatch();

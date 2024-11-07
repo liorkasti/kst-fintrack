@@ -1,4 +1,3 @@
-// src/contexts/ModalContext.tsx
 import React, {createContext, useContext, useState, ReactNode} from 'react';
 import {ModalContextType, ModalTitle} from '../constants/types';
 
@@ -6,7 +5,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<ModalTitle>('Create');
+  const [modalTitle, setModalTitle] = useState<ModalTitle>(null);
 
   const openModal = (title: ModalTitle) => {
     setModalTitle(title);
@@ -18,6 +17,7 @@ export const ModalProvider: React.FC<{children: ReactNode}> = ({children}) => {
     setModalTitle('Create');
   };
 
+  if (modalTitle) return;
   return (
     <ModalContext.Provider
       value={{isModalOpen, modalTitle, openModal, closeModal}}>

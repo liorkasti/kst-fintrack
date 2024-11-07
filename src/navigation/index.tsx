@@ -13,8 +13,7 @@ import {RootStateType} from '../constants/types';
 const RootStack = createNativeStackNavigator();
 
 const RootStackScreen: FC = () => {
-  //TODO: fetch data from server
-  const {fullName} = useSelector((state: RootStateType) => state.user);
+  const fullName = useSelector((state: RootStateType) => state.user.fullName);
 
   const getAppNavigationOptions = (): NativeStackNavigationOptions => {
     if (fullName) {
@@ -36,12 +35,15 @@ const RootStackScreen: FC = () => {
   return (
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{headerShown: false}}>
-        <RootStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-        <RootStack.Screen
-          name="AppNavigation"
-          component={AppNavigation}
-          options={getAppNavigationOptions}
-        />
+        {fullName ? (
+          <RootStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+        ) : (
+          <RootStack.Screen
+            name="AppNavigation"
+            component={AppNavigation}
+            options={getAppNavigationOptions}
+          />
+        )}
       </RootStack.Navigator>
     </NavigationContainer>
   );

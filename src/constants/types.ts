@@ -52,3 +52,12 @@ export interface InputType {
   testID?: string;
   invalid: boolean;
 }
+
+export type ModalTitle = 'Create' | 'Edit' | 'Filters' | null;
+
+export interface ModalContextType {
+  isModalOpen: boolean;
+  modalTitle: ModalTitle;
+  openModal: (title: ModalTitle) => void;
+  closeModal: () => void;
+}
