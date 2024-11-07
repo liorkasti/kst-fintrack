@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {FC, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -25,9 +25,7 @@ import {
 import {formatDate, HIT_SLOP_10, minDate} from '../utils';
 import Button from './Button';
 
-interface ExpenseEditorProps {}
-
-const ExpenseEditor: FC<ExpenseEditorProps> = () => {
+const ExpenseEditor = () => {
   const {
     title,
     setTitle,

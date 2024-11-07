@@ -7,7 +7,7 @@ import {SIGN_OUT, TOTAL_EXPENSES_ITEMS, WELCOME_SCREEN} from '../constants';
 import {COLORS} from '../constants/theme';
 import {RootStackParamListType, RootStateType} from '../constants/types';
 import {persistor} from '../store';
-import {clearUser, signOutUser} from '../store/slices/user-slice';
+import {clearUser} from '../store/slices/user-slice';
 
 type ProfileScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -25,7 +25,6 @@ const ProfileScreen: FC<ProfileScreenProps> = ({navigation}) => {
 
   const handleSignout = async () => {
     dispatch(clearUser());
-    signOutUser;
     await persistor.purge();
     navigation.replace(WELCOME_SCREEN);
   };

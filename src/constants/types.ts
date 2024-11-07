@@ -53,7 +53,7 @@ export interface InputType {
   invalid: boolean;
 }
 
-export type ModalTitle = 'Create' | 'Edit' | 'Filters' | null;
+export type ModalTitle = 'Create' | 'Edit' | 'Filters' | '';
 
 export interface ModalContextType {
   isModalOpen: boolean;

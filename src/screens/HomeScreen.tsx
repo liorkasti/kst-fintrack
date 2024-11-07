@@ -10,9 +10,14 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import SwipeableItem from 'react-native-swipeable-item';
 import {closeIcon, editIcon, filterIcon} from '../assets';
-import {CLEAN_FILTER, FILTER, FILTERS, TOTAL_EXPENSES} from '../constants';
+import {
+  CLEAN_FILTER,
+  EDIT,
+  FILTER,
+  FILTERS,
+  TOTAL_EXPENSES,
+} from '../constants';
 import {COLORS} from '../constants/theme';
 import {
   ExpenseSectionType,
@@ -20,11 +25,7 @@ import {
   RootStateType,
 } from '../constants/types';
 import {useModal} from '../contexts/ModalContext';
-import {
-  clearFilterData,
-  deleteExpense,
-  updateExpense,
-} from '../store/slices/expenses-slice';
+import {clearFilterData, deleteExpense} from '../store/slices/expenses-slice';
 import {HIT_SLOP_10} from '../utils';
 
 const HomeScreen = () => {
@@ -43,17 +44,17 @@ const HomeScreen = () => {
     [dispatch],
   );
 
-  const handleEditExpense = useCallback(
-    async (expenseId: string) => {
-      dispatch(updateExpense(expenseId));
-    },
-    [dispatch],
-  );
-
   const onClear = useCallback(() => {
     dispatch(clearFilterData());
     filteredExpensesRef.current = expenses;
   }, [dispatch, expenses]);
+
+  const renderSectionHeader = useCallback(
+    ({section: {title}}: {section: {title: string}}) => (
+      <Text style={styles.sectionHeader}>{title}</Text>
+    ),
+    [],
+  );
 
   const expenseSections = useMemo(() => {
     filteredExpensesRef.current =
@@ -85,50 +86,43 @@ const HomeScreen = () => {
     [filteredExpensesRef],
   );
 
-  const renderUnderlayLeft = useCallback(
-    ({item, percentOpen}) => {
-      const animatedStyle = useAnimatedStyle(() => {
-        return {
-          opacity: percentOpen.value,
-        };
-      });
+  // const renderUnderlayLeft = useCallback(
+  //   ({item, percentOpen}) => {
+  //     const animatedStyle = useAnimatedStyle(() => {
+  //       return {
+  //         opacity: percentOpen.value,
+  //       };
+  //     });
 
-      return (
-        <Animated.View style={[styles.underlayLeft, animatedStyle]}>
-          <TouchableOpacity onPress={() => handleDeleteExpense(item.id)}>
-            <Image source={closeIcon} style={styles.removeIcon} />
-          </TouchableOpacity>
-        </Animated.View>
-      );
-    },
-    [handleDeleteExpense],
-  );
+  //     return (
+  //       <Animated.View style={[styles.underlayLeft, animatedStyle]}>
+  //         <TouchableOpacity onPress={() => handleDeleteExpense(item.id)}>
+  //           <Image source={closeIcon} style={styles.removeIcon} />
+  //         </TouchableOpacity>
+  //       </Animated.View>
+  //     );
+  //   },
+  //   [handleDeleteExpense],
+  // );
 
-  const renderUnderlayRight = useCallback(
-    ({item, percentOpen}) => {
-      const animatedStyle = useAnimatedStyle(() => {
-        return {
-          opacity: percentOpen.value,
-        };
-      });
+  // const renderUnderlayRight = useCallback(
+  //   ({item, percentOpen}) => {
+  //     const animatedStyle = useAnimatedStyle(() => {
+  //       return {
+  //         opacity: percentOpen.value,
+  //       };
+  //     });
 
-      return (
-        <Animated.View style={[styles.underlayRight, animatedStyle]}>
-          <TouchableOpacity onPress={() => handleEditExpense(item)}>
-            <Image source={editIcon} style={styles.editIcon} />
-          </TouchableOpacity>
-        </Animated.View>
-      );
-    },
-    [handleEditExpense],
-  );
-
-  const renderSectionHeader = useCallback(
-    ({section: {title}}: {section: {title: string}}) => (
-      <Text style={styles.sectionHeader}>{title}</Text>
-    ),
-    [],
-  );
+  //     return (
+  //       <Animated.View style={[styles.underlayRight, animatedStyle]}>
+  //         <TouchableOpacity onPress={() => openModal(EDIT)}>
+  //           <Image source={editIcon} style={styles.editIcon} />
+  //         </TouchableOpacity>
+  //       </Animated.View>
+  //     );
+  //   },
+  //   [openModal],
+  // );
 
   // TODO: continue
   // const renderExpenseItem = useCallback(
@@ -160,12 +154,12 @@ const HomeScreen = () => {
         <Text style={styles.paymentTitle}>{item.title}</Text>
         <Text style={styles.paymentTitle}>${item.amount}</Text>
         {/* Swipea Right */}
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => openModal(EDIT)}>
           <Image source={editIcon} style={styles.editIcon} />
         </TouchableOpacity>
       </View>
     ),
-    [handleDeleteExpense],
+    [handleDeleteExpense, openModal],
   );
 
   return (
@@ -249,7 +243,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   removeIcon: {width: 20, height: 20, marginRight: 2},
-  editIcon: {width: 20, height: 20, marginRight: 10},
+  editIcon: {width: 14, height: 14, marginRight: 10},
   clearFilterButton: {},
   clearFilterText: {
     marginTop: -37,

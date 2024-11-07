@@ -14,34 +14,21 @@ const RootStack = createNativeStackNavigator();
 
 const RootStackScreen: FC = () => {
   const fullName = useSelector((state: RootStateType) => state.user.fullName);
-
-  const getAppNavigationOptions = (): NativeStackNavigationOptions => {
-    if (fullName) {
-      return {
-        headerShown: true,
-        title: fullName,
-        headerTitleAlign: 'center',
-        headerBackVisible: false,
-      };
-    } else {
-      return {
-        title: undefined,
-        headerShown: false,
-        headerBackVisible: false,
-      };
-    }
-  };
-
   return (
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{headerShown: false}}>
-        {fullName ? (
+        {!fullName ? (
           <RootStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         ) : (
           <RootStack.Screen
             name="AppNavigation"
             component={AppNavigation}
-            options={getAppNavigationOptions}
+            options={{
+              headerShown: true,
+              title: fullName,
+              headerTitleAlign: 'center',
+              headerBackVisible: false,
+            }}
           />
         )}
       </RootStack.Navigator>
