@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import {
+  Animated,
   Image,
   SectionList,
   StyleSheet,
@@ -9,7 +10,8 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {closeIcon, filterIcon} from '../assets';
+import SwipeableItem from 'react-native-swipeable-item';
+import {closeIcon, editIcon, filterIcon} from '../assets';
 import {CLEAN_FILTER, FILTER, FILTERS, TOTAL_EXPENSES} from '../constants';
 import {COLORS} from '../constants/theme';
 import {
@@ -18,7 +20,11 @@ import {
   RootStateType,
 } from '../constants/types';
 import {useModal} from '../contexts/ModalContext';
-import {clearFilterData, deleteExpense} from '../store/slices/expenses-slice';
+import {
+  clearFilterData,
+  deleteExpense,
+  updateExpense,
+} from '../store/slices/expenses-slice';
 import {HIT_SLOP_10} from '../utils';
 
 const HomeScreen = () => {
@@ -38,33 +44,17 @@ const HomeScreen = () => {
     [dispatch],
   );
 
-  const renderExpenseItem = useCallback(
-    ({item}: {item: ExpenseType}) => (
-      <View style={styles.sectionContainer}>
-        <TouchableOpacity onPress={() => handleDeleteExpense(item.id)}>
-          <Image source={closeIcon} style={styles.removeIcon} />
-        </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => {}}>
-          <Image source={editIcon} style={styles.editIcon} />
-          </TouchableOpacity> */}
-        <Text style={styles.paymentTitle}>{item.title}</Text>
-        <Text style={styles.paymentTitle}>${item.amount}</Text>
-      </View>
-    ),
-    [handleDeleteExpense],
+  const handleEditExpense = useCallback(
+    async (expenseId: string) => {
+      dispatch(updateExpense(expenseId));
+    },
+    [dispatch],
   );
 
   const onClear = useCallback(() => {
     dispatch(clearFilterData());
     filteredExpensesRef.current = expenses;
   }, [dispatch, expenses]);
-
-  const renderSectionHeader = useCallback(
-    ({section: {title}}: {section: {title: string}}) => (
-      <Text style={styles.sectionHeader}>{title}</Text>
-    ),
-    [],
-  );
 
   const expenseSections = useMemo(() => {
     filteredExpensesRef.current =
@@ -88,8 +78,95 @@ const HomeScreen = () => {
 
   //TODO: optimize
   const totalExpenses = useMemo(
-    () => expenses.reduce((total, expense) => total + expense.amount, 0),
-    [expenses],
+    () =>
+      filteredExpensesRef.current.reduce(
+        (total, expense) => total + expense.amount,
+        0,
+      ),
+    [filteredExpensesRef],
+  );
+
+  const renderUnderlayLeft = useCallback(
+    ({item, percentOpen}) => {
+      const animatedStyle = useAnimatedStyle(() => {
+        return {
+          opacity: percentOpen.value,
+        };
+      });
+
+      return (
+        <Animated.View style={[styles.underlayLeft, animatedStyle]}>
+          <TouchableOpacity onPress={() => handleDeleteExpense(item.id)}>
+            <Image source={closeIcon} style={styles.removeIcon} />
+          </TouchableOpacity>
+        </Animated.View>
+      );
+    },
+    [handleDeleteExpense],
+  );
+
+  const renderUnderlayRight = useCallback(
+    ({item, percentOpen}) => {
+      const animatedStyle = useAnimatedStyle(() => {
+        return {
+          opacity: percentOpen.value,
+        };
+      });
+
+      return (
+        <Animated.View style={[styles.underlayRight, animatedStyle]}>
+          <TouchableOpacity onPress={() => handleEditExpense(item)}>
+            <Image source={editIcon} style={styles.editIcon} />
+          </TouchableOpacity>
+        </Animated.View>
+      );
+    },
+    [handleEditExpense],
+  );
+
+  const renderSectionHeader = useCallback(
+    ({section: {title}}: {section: {title: string}}) => (
+      <Text style={styles.sectionHeader}>{title}</Text>
+    ),
+    [],
+  );
+
+  // TODO: continue
+  // const renderExpenseItem = useCallback(
+  //   ({item}: {item: ExpenseType}) => (
+  //     <SwipeableItem
+  //       key={item.id}
+  //       item={item}
+  //       renderUnderlayLeft={renderUnderlayLeft}
+  //       renderUnderlayRight={renderUnderlayRight}
+  //       snapPointsLeft={[50]}
+  //       snapPointsRight={[50]}>
+  //       <View style={styles.sectionContainer}>
+  //         <Text style={styles.paymentTitle}>{item.title}</Text>
+  //         <Text style={styles.paymentTitle}>${item.amount}</Text>
+  //       </View>
+  //     </SwipeableItem>
+  //   ),
+  //   [renderUnderlayLeft, renderUnderlayRight],
+  // );
+
+  const renderExpenseItem = useCallback(
+    ({item}: {item: ExpenseType}) => (
+      <View style={styles.sectionContainer}>
+        {/* Swipea Left */}
+        <TouchableOpacity onPress={() => handleDeleteExpense(item.id)}>
+          <Image source={closeIcon} style={styles.removeIcon} />
+        </TouchableOpacity>
+        {/* List Item */}
+        <Text style={styles.paymentTitle}>{item.title}</Text>
+        <Text style={styles.paymentTitle}>${item.amount}</Text>
+        {/* Swipea Right */}
+        <TouchableOpacity onPress={() => {}}>
+          <Image source={editIcon} style={styles.editIcon} />
+        </TouchableOpacity>
+      </View>
+    ),
+    [handleDeleteExpense],
   );
 
   return (
@@ -217,6 +294,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+  },
+  underlayLeft: {
+    flex: 1,
+    backgroundColor: 'red',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  underlayRight: {
+    flex: 1,
+    backgroundColor: 'green',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
 

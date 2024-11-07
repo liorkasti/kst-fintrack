@@ -13,6 +13,7 @@ import {RootStateType} from '../constants/types';
 const RootStack = createNativeStackNavigator();
 
 const RootStackScreen: FC = () => {
+  //TODO: fetch data from server
   const {fullName} = useSelector((state: RootStateType) => state.user);
 
   const getAppNavigationOptions = (): NativeStackNavigationOptions => {
